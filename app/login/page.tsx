@@ -71,7 +71,7 @@ const LoginPage = () => {
       <div className="flex w-full flex-col items-center justify-center gap-4 p-8 md:p-12">
         <div className="flex w-full max-w-xl flex-col gap-9 md:px-20">
           <h2 className="text-2xl font-bold sm:text-3xl md:text-4xl">
-            Sign In to WalletWise
+            Sign In to SmartStock IMS
           </h2>
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <InputField
@@ -93,25 +93,14 @@ const LoginPage = () => {
                 disabled={loading}
                 required
               />
-              <span className="mt-1 self-end text-xs">
-                <Link href="/resetpassword">Forgot password?</Link>
-              </span>
             </div>
 
-            <div className="flex w-full flex-col gap-2">
-              <Button
-                text="Sign in"
-                isLoading={loading}
-                disabled={loading}
-                type="submit"
-              />
-              <span className="mt-1 text-center">
-                Didn't have an account?{" "}
-                <span className="font-bold">
-                  <Link href="/register">Sign up</Link>
-                </span>
-              </span>
-            </div>
+            <Button
+              text="Sign in"
+              isLoading={loading}
+              disabled={loading}
+              type="submit"
+            />
           </form>
         </div>
       </div>
