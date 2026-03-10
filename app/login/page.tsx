@@ -5,13 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ZodError } from "zod";
 import { fetchUserLogin } from "@/services/auth.Services";
-import { useUser } from "@/hooks/useUser";
-
-import Button from "@/components/Button";
-import InputField from "@/components/InputField";
+import { useUser } from "@/hook/useUser";
 import { loginSchema } from "@/utils/validation/authSchema";
+import Button from "@/components/Button";
+import PasswordField from "@/components/PasswordField";
+import InputField from "@/components/InputField";
 import { loginPageInterface } from "@/utils/interfaces/authInterface";
-import PasswordField from "@/components/PasswordField ";
 
 const LoginPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -37,6 +36,7 @@ const LoginPage = () => {
       console.log(res);
       if (res.success) {
         toast.success(res.message);
+        localStorage.setItem("token", res.data.token);
         setUser({
           id: res.data.id,
           name: res.data.name,
@@ -147,18 +147,18 @@ const LoginPage = () => {
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400"></div>
                   <span className="text-sm font-medium text-blue-300">
-                    Smart Finance
+                    Smart Inventory
                   </span>
                 </div>
               </div>
             </div>
 
             <h2 className="animate-fade-in animation-delay-300 mb-4 bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-7xl font-bold text-transparent">
-              WalletWise
+              SmartStock
             </h2>
 
             <p className="animate-fade-in animation-delay-500 mb-8 text-2xl text-slate-300">
-              Track. Analyze. Grow.
+              Track. Stock. Optimize.
             </p>
 
             <div className="animate-fade-in animation-delay-700 space-y-4">
@@ -179,7 +179,7 @@ const LoginPage = () => {
                   </svg>
                 </div>
                 <span className="text-slate-400 transition-colors duration-300 group-hover:text-slate-300">
-                  Real-time collaboration
+                  Real-time stock updates
                 </span>
               </div>
 
@@ -200,7 +200,7 @@ const LoginPage = () => {
                   </svg>
                 </div>
                 <span className="text-slate-400 transition-colors duration-300 group-hover:text-slate-300">
-                  Enterprise-grade security
+                  Secure inventory management
                 </span>
               </div>
 
@@ -221,31 +221,31 @@ const LoginPage = () => {
                   </svg>
                 </div>
                 <span className="text-slate-400 transition-colors duration-300 group-hover:text-slate-300">
-                  Advanced analytics
+                  Sales & stock analytics
                 </span>
               </div>
             </div>
 
             <div className="animate-fade-in animation-delay-1000 mt-10 grid grid-cols-3 gap-6 border-t border-slate-700/50 pt-8">
               <div className="text-center">
-                <p className="text-3xl font-bold text-white">50K+</p>
-                <p className="mt-1 text-sm text-slate-500">Transactions</p>
+                <p className="text-3xl font-bold text-white">10K+</p>
+                <p className="mt-1 text-sm text-slate-500">Products</p>
               </div>
               <div className="border-x border-slate-700/50 text-center">
                 <p className="text-3xl font-bold text-white">100%</p>
-                <p className="mt-1 text-sm text-slate-500">Encrypted</p>
+                <p className="mt-1 text-sm text-slate-500">Accurate Stock</p>
               </div>
               <div className="text-center">
                 <p className="text-3xl font-bold text-white">Real-time</p>
-                <p className="mt-1 text-sm text-slate-500">Updates</p>
+                <p className="mt-1 text-sm text-slate-500">Inventory</p>
               </div>
               <div className="border-x border-slate-700/50 text-center">
-                <p className="text-3xl font-bold text-white">99.9%</p>
-                <p className="mt-1 text-sm text-slate-500">Uptime</p>
+                <p className="text-3xl font-bold text-white">Optimized</p>
+                <p className="mt-1 text-sm text-slate-500">Workflows</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-white">24/7</p>
-                <p className="mt-1 text-sm text-slate-500">Support</p>
+                <p className="text-3xl font-bold text-white">Easy</p>
+                <p className="mt-1 text-sm text-slate-500">Reporting</p>
               </div>
             </div>
           </div>
