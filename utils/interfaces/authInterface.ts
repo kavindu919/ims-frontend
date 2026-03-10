@@ -7,6 +7,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  role: "admin" | "staff";
 }
 
 export interface UserContextType {

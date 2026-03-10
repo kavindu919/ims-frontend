@@ -33,14 +33,15 @@ const LoginPage = () => {
       setLoading(true);
       const validData = loginSchema.parse(data);
       const res = await fetchUserLogin(validData.email, validData.password);
-      console.log(res);
       if (res.success) {
         toast.success(res.message);
         localStorage.setItem("token", res.data.token);
+        document.cookie = `token=${res.token}; path=/`;
         setUser({
           id: res.data.id,
           name: res.data.name,
           email: res.data.email,
+          role: res.data.role,
         });
         setData({
           email: "",

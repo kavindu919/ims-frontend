@@ -47,6 +47,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       const res = await fetchUserLogout();
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      document.cookie = "token=; path=/; Max-Age=0";
       setUser(null);
       setError(null);
       toast.success(res.message || "Logged out successfully.");
