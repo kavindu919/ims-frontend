@@ -16,7 +16,7 @@ export const fetchUserLogin = async (email: string, password: string) => {
 
 export const fetchUserProfile = async () => {
   try {
-    const res = await api.get("/auth/profile");
+    const res = await api.get("/auth/me");
     return res.data;
   } catch (error: any) {
     const errorMessage =
