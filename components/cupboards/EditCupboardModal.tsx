@@ -1,32 +1,48 @@
 "use client";
 
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
+import FormInput from "@/components/FormInput";
 import toast from "react-hot-toast";
 import { ZodError } from "zod";
-import FormInput from "../FormInput";
-import { createCupboard } from "@/services/cupboard.Services";
-import { cupboardSchema } from "@/utils/validation/cupboard.Schema";
+import { updateCupboard } from "@/services/cupboard.Services";
 import { CreateCupboardInterface } from "@/utils/interfaces/cupboardInterface";
+import { cupboardSchema } from "@/utils/validation/cupboard.Schema";
 
-interface CreateCupboardModalProps {
+interface EditCupboardModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  data: {
+    id: number;
+    name: string;
+    location: string | null;
+    description: string | null;
+  };
 }
 
-const CreateCupboardModal = memo(
-  ({ isOpen, onClose, onSuccess }: CreateCupboardModalProps) => {
+const EditCupboardModal = memo(
+  ({ isOpen, onClose, onSuccess, data }: EditCupboardModalProps) => {
     const [loading, setLoading] = useState<boolean>(false);
-    const [data, setData] = useState<CreateCupboardInterface>({
+    const [formData, setFormData] = useState<CreateCupboardInterface>({
       name: "",
       location: "",
       description: "",
     });
 
+    useEffect(() => {
+      if (data) {
+        setFormData({
+          name: data.name,
+          location: data.location ?? "",
+          description: data.description ?? "",
+        });
+      }
+    }, [data]);
+
     const handleChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
       },
       [],
     );
@@ -36,11 +52,11 @@ const CreateCupboardModal = memo(
         e.preventDefault();
         try {
           setLoading(true);
-          const validData = cupboardSchema.parse(data);
-          const res = await createCupboard(validData);
+          const validData = cupboardSchema.parse(formData);
+          const res = await updateCupboard({ id: data.id, ...validData });
+
           if (res.success) {
             toast.success(res.message);
-            setData({ name: "", location: "", description: "" });
             onSuccess?.();
             onClose();
           } else {
@@ -48,20 +64,19 @@ const CreateCupboardModal = memo(
           }
         } catch (error: any) {
           if (error instanceof ZodError) {
-            toast.error(error.issues[0]?.message);
+            toast.error(error.issues[0]?.message || "Validation error");
             return;
           }
-          toast.error(error?.message);
+          toast.error(error?.message || "Failed to update cupboard");
         } finally {
           setLoading(false);
         }
       },
-      [data, onClose, onSuccess],
+      [formData, data, onClose, onSuccess],
     );
 
     const handleClose = useCallback(() => {
       if (!loading) {
-        setData({ name: "", location: "", description: "" });
         onClose();
       }
     }, [loading, onClose]);
@@ -79,7 +94,7 @@ const CreateCupboardModal = memo(
           <div className="w-full max-w-lg overflow-hidden rounded-lg bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div>
-                <h5 className="text-lg font-semibold">Create Cupboard</h5>
+                <h5 className="text-lg font-semibold">Edit Cupboard</h5>
               </div>
               <button
                 onClick={handleClose}
@@ -96,7 +111,7 @@ const CreateCupboardModal = memo(
                   <header className="flex flex-col items-start justify-start gap-1">
                     <h4 className="text-base font-medium">Cupboard Details</h4>
                     <h5 className="text-sm font-normal text-slate-400">
-                      Add a new storage cupboard to the system.
+                      Update the cupboard information.
                     </h5>
                   </header>
                   <section className="flex flex-col gap-3">
@@ -104,7 +119,7 @@ const CreateCupboardModal = memo(
                       label="Cupboard Name"
                       name="name"
                       type="text"
-                      value={data.name}
+                      value={formData.name}
                       placeholder="e.g. Cabinet A"
                       onChange={handleChange}
                       disabled={loading}
@@ -114,7 +129,7 @@ const CreateCupboardModal = memo(
                       label="Location"
                       name="location"
                       type="text"
-                      value={data.location}
+                      value={formData.location}
                       placeholder="e.g. Server Room, Main Office"
                       onChange={handleChange}
                       disabled={loading}
@@ -123,7 +138,7 @@ const CreateCupboardModal = memo(
                       label="Description"
                       name="description"
                       type="text"
-                      value={data.description}
+                      value={formData.description}
                       placeholder="e.g. Stores networking equipment"
                       onChange={handleChange}
                       disabled={loading}
@@ -146,7 +161,7 @@ const CreateCupboardModal = memo(
                   disabled={loading}
                   className="bg-secondary h-10 w-36 cursor-pointer rounded-md border border-slate-300 text-sm font-bold text-white shadow-md focus:drop-shadow-xl disabled:opacity-50"
                 >
-                  {loading ? "Creating..." : "Create Cupboard"}
+                  {loading ? "Updating..." : "Update Cupboard"}
                 </button>
               </div>
             </form>
@@ -157,4 +172,4 @@ const CreateCupboardModal = memo(
   },
 );
 
-export default CreateCupboardModal;
+export default EditCupboardModal;
