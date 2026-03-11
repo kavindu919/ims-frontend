@@ -21,11 +21,9 @@ import {
 import BorrowFilters from "@/components/borrow/BorrowFilters";
 import CreateBorrowModal from "@/components/borrow/CreateBorrowModal";
 import { useUser } from "@/hook/useUser";
+import { statusColors } from "@/utils/helper/borrowStatusColor";
 
-const statusColors: Record<string, string> = {
-  borrowed: "bg-blue-100 text-blue-700",
-  returned: "bg-green-100 text-green-700",
-};
+
 
 const page = () => {
   const pathname = usePathname();
@@ -76,7 +74,7 @@ const page = () => {
             })),
           );
         }
-      } catch {}
+      } catch { }
     };
     fetchItems();
   }, []);
