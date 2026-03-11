@@ -26,9 +26,12 @@ import {
   InventoryQueryProps,
 } from "@/utils/interfaces/inventoryInterface";
 import { statusColors } from "@/utils/helper/changeStatus.helper";
+import { useUser } from "@/hook/useUser";
 
 const page = () => {
   const pathname = usePathname();
+  const { user } = useUser();
+  const isAdmin = user?.role === "admin";
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState<{
     id: number;
     isOpen: boolean;
@@ -237,7 +240,7 @@ const page = () => {
               <th className="tableheadcell">Storage Place</th>
               <th className="tableheadcell">Status</th>
               <th className="tableheadcell">Created</th>
-              <th className="tableheadcell">Actions</th>
+              {isAdmin && <th className="tableheadcell">Actions</th>}
             </tr>
           </thead>
           <tbody className="tablebody">
@@ -291,38 +294,40 @@ const page = () => {
                       ? new Date(item.created_at).toLocaleDateString()
                       : "-"}
                   </td>
-                  <td className="tabledata">
-                    <div className="flex items-center gap-2">
-                      <button
-                        className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-600"
-                        onClick={() => handleEditClick(item)}
-                        title="Edit"
-                      >
-                        <FiEdit2 size={14} />
-                      </button>
-                      <button
-                        className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-blue-50 hover:text-blue-500"
-                        onClick={() => handleAdjustClick(item)}
-                        title="Adjust Quantity"
-                      >
-                        <TbAdjustments size={16} />
-                      </button>
-                      <button
-                        className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-purple-50 hover:text-purple-500"
-                        onClick={() => handleStatusClick(item)}
-                        title="Change Status"
-                      >
-                        <MdOutlineSwapHoriz size={16} />
-                      </button>
-                      <button
-                        className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-red-50 hover:text-red-500"
-                        onClick={() => handleDeleteClick(item.id)}
-                        title="Delete"
-                      >
-                        <MdDeleteOutline size={16} />
-                      </button>
-                    </div>
-                  </td>
+                  {isAdmin && (
+                    <td className="tabledata">
+                      <div className="flex items-center gap-2">
+                        <button
+                          className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-600"
+                          onClick={() => handleEditClick(item)}
+                          title="Edit"
+                        >
+                          <FiEdit2 size={14} />
+                        </button>
+                        <button
+                          className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-blue-50 hover:text-blue-500"
+                          onClick={() => handleAdjustClick(item)}
+                          title="Adjust Quantity"
+                        >
+                          <TbAdjustments size={16} />
+                        </button>
+                        <button
+                          className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-purple-50 hover:text-purple-500"
+                          onClick={() => handleStatusClick(item)}
+                          title="Change Status"
+                        >
+                          <MdOutlineSwapHoriz size={16} />
+                        </button>
+                        <button
+                          className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-red-50 hover:text-red-500"
+                          onClick={() => handleDeleteClick(item.id)}
+                          title="Delete"
+                        >
+                          <MdDeleteOutline size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))
             )}
@@ -352,7 +357,7 @@ const page = () => {
         </PopUpModalComponent>
       )}
 
-      {openCreatePopup && (
+      {openCreatePopup && isAdmin && (
         <CreateInventoryItemModal
           isOpen={openCreatePopup}
           onClose={() => setOpenCreatePopup(false)}

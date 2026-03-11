@@ -13,6 +13,7 @@ import UserFilters from "@/components/users/UserFilters";
 import { useDebounce } from "@/hook/useDebounce";
 import { User, UserQueryProps } from "@/utils/interfaces/userInterface";
 import { roleColors } from "@/utils/helper/roleBadge.helper";
+import { useUser } from "@/hook/useUser";
 
 const page = () => {
   const pathname = usePathname();
@@ -35,6 +36,9 @@ const page = () => {
     page: 1,
     limit: 20,
   });
+
+  const { user } = useUser();
+  const isAdmin = user?.role === "admin";
 
   const debounced = useDebounce(400, query.search);
 
@@ -118,7 +122,7 @@ const page = () => {
               <th className="tableheadcell">Status</th>
               <th className="tableheadcell">Created By</th>
               <th className="tableheadcell">Created</th>
-              <th className="tableheadcell">Actions</th>
+              {isAdmin && <th className="tableheadcell">Actions</th>}
             </tr>
           </thead>
           <tbody className="tablebody">
@@ -174,14 +178,16 @@ const page = () => {
                       ? new Date(item.created_at).toLocaleDateString()
                       : "-"}
                   </td>
-                  <td className="tabledata">
-                    <button
-                      className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-600"
-                      onClick={() => handleEditClick(item)}
-                    >
-                      <FiEdit2 size={14} />
-                    </button>
-                  </td>
+                  {isAdmin && (
+                    <td className="tabledata">
+                      <button
+                        className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-600"
+                        onClick={() => handleEditClick(item)}
+                      >
+                        <FiEdit2 size={14} />
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))
             )}
@@ -197,7 +203,7 @@ const page = () => {
         />
       </section>
 
-      {openCreatePopup && (
+      {openCreatePopup && isAdmin && (
         <CreateUserModal
           isOpen={openCreatePopup}
           onClose={() => setOpenCreatePopup(false)}

@@ -20,6 +20,7 @@ import {
 } from "@/utils/interfaces/burrowRecordInterface";
 import BorrowFilters from "@/components/borrow/BorrowFilters";
 import CreateBorrowModal from "@/components/borrow/CreateBorrowModal";
+import { useUser } from "@/hook/useUser";
 
 const statusColors: Record<string, string> = {
   borrowed: "bg-blue-100 text-blue-700",
@@ -49,6 +50,9 @@ const page = () => {
     page: 1,
     limit: 20,
   });
+
+  const { user } = useUser();
+  const isAdmin = user?.role === "admin";
 
   const debounced = useDebounce(400, query.search);
 
@@ -179,7 +183,7 @@ const page = () => {
               <th className="tableheadcell">Expected Return</th>
               <th className="tableheadcell">Return Date</th>
               <th className="tableheadcell">Status</th>
-              <th className="tableheadcell">Actions</th>
+              {isAdmin && <th className="tableheadcell">Actions</th>}
             </tr>
           </thead>
           <tbody className="tablebody">
@@ -244,17 +248,19 @@ const page = () => {
                       {item.status}
                     </span>
                   </td>
-                  <td className="tabledata">
-                    {item.status === "borrowed" && (
-                      <button
-                        className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-green-50 hover:text-green-600"
-                        onClick={() => handleReturnClick(item.id)}
-                        title="Mark as Returned"
-                      >
-                        <MdOutlineKeyboardReturn size={16} />
-                      </button>
-                    )}
-                  </td>
+                  {isAdmin && (
+                    <td className="tabledata">
+                      {item.status === "borrowed" && (
+                        <button
+                          className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-green-50 hover:text-green-600"
+                          onClick={() => handleReturnClick(item.id)}
+                          title="Mark as Returned"
+                        >
+                          <MdOutlineKeyboardReturn size={16} />
+                        </button>
+                      )}
+                    </td>
+                  )}
                 </tr>
               ))
             )}
@@ -270,7 +276,7 @@ const page = () => {
         />
       </section>
 
-      {isReturnPopupOpen.isOpen && (
+      {isReturnPopupOpen.isOpen && isAdmin && (
         <PopUpModalComponent
           isOpen={isReturnPopupOpen.isOpen}
           title="Return Item"
@@ -284,7 +290,7 @@ const page = () => {
         </PopUpModalComponent>
       )}
 
-      {openCreatePopup && (
+      {openCreatePopup && isAdmin && (
         <CreateBorrowModal
           isOpen={openCreatePopup}
           onClose={() => setOpenCreatePopup(false)}

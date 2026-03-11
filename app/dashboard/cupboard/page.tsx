@@ -20,6 +20,7 @@ import PopupButton from "@/components/PopupButton";
 import EditCupboardModal from "@/components/cupboards/EditCupboardModal";
 import { useDebounce } from "@/hook/useDebounce";
 import CupboardFilters from "@/components/cupboards/CupboardFilters";
+import { useUser } from "@/hook/useUser";
 
 const page = () => {
   const pathname = usePathname();
@@ -45,6 +46,8 @@ const page = () => {
     limit: 20,
   });
 
+  const { user } = useUser();
+  const isAdmin = user?.role === "admin";
   const debounced = useDebounce(400, query.search);
 
   const fetchData = useCallback(async () => {
@@ -152,7 +155,7 @@ const page = () => {
               <th className="tableheadcell">Description</th>
               <th className="tableheadcell">Storage Places</th>
               <th className="tableheadcell">Created</th>
-              <th className="tableheadcell">Actions</th>
+              {isAdmin && <th className="tableheadcell">Actions</th>}
             </tr>
           </thead>
           <tbody className="tablebody">
@@ -197,22 +200,24 @@ const page = () => {
                       ? new Date(item.created_at).toLocaleDateString()
                       : "-"}
                   </td>
-                  <td className="tabledata">
-                    <div className="flex items-center gap-2">
-                      <button
-                        className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-600"
-                        onClick={() => handleEditClick(item)}
-                      >
-                        <FiEdit2 size={14} />
-                      </button>
-                      <button
-                        className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-red-50 hover:text-red-500"
-                        onClick={() => handleDeleteClick(item.id)}
-                      >
-                        <MdDeleteOutline size={16} />
-                      </button>
-                    </div>
-                  </td>
+                  {isAdmin && (
+                    <td className="tabledata">
+                      <div className="flex items-center gap-2">
+                        <button
+                          className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-600"
+                          onClick={() => handleEditClick(item)}
+                        >
+                          <FiEdit2 size={14} />
+                        </button>
+                        <button
+                          className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-red-50 hover:text-red-500"
+                          onClick={() => handleDeleteClick(item.id)}
+                        >
+                          <MdDeleteOutline size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))
             )}
@@ -242,7 +247,7 @@ const page = () => {
         </PopUpModalComponent>
       )}
 
-      {openCreatePopup && (
+      {openCreatePopup && isAdmin && (
         <CreateCupboardModal
           isOpen={openCreatePopup}
           onClose={() => setOpenCreatePopup(false)}

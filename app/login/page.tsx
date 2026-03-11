@@ -42,6 +42,7 @@ const page = () => {
           id: res.data.id,
           name: res.data.name,
           email: res.data.email,
+          role: res.data.role,
         });
         setData({
           email: "",
