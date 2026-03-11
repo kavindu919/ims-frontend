@@ -2,15 +2,16 @@
 
 import {
   LuActivity,
-  LuCreditCard,
-  LuFilePlus,
+  LuArchive,
+  LuBell,
+  LuFileText,
   LuLayers,
-  LuListTodo,
-  LuPiggyBank,
+  LuPackage,
   LuReceipt,
-  LuTrendingDown,
+  LuSettings,
   LuTrendingUp,
-  LuWallet,
+  LuUser,
+  LuUsers,
 } from "react-icons/lu";
 import { VscDashboard } from "react-icons/vsc";
 import Link from "next/link";
@@ -28,61 +29,28 @@ export default function Sidebar({
   const pathname = usePathname();
 
   const navLinks = [
+    { label: "Dashboard", icon: VscDashboard, path: "/dashboard" },
+
+    { label: "Inventory", icon: LuPackage, path: "/dashboard/inventory" },
+    { label: "Borrow Records", icon: LuReceipt, path: "/dashboard/borrow" },
+
+    { label: "Cupboards", icon: LuArchive, path: "/dashboard/cupboard" },
     {
-      label: "Dashboard",
-      icon: VscDashboard,
-      path: "/dashboard",
-    },
-    {
-      label: "Transactions",
+      label: "Storage Places",
       icon: LuLayers,
-      path: "/dashboard/transactions",
+      path: "/dashboard/storage-places",
     },
+    { label: "Reports", icon: LuTrendingUp, path: "/coming-soon" },
+    { label: "Export Logs", icon: LuFileText, path: "/coming-soon" },
+    { label: "Users", icon: LuUsers, path: "/dashboard/users" },
     {
-      label: "Budget",
-      icon: LuPiggyBank,
-      path: "/dashboard/budget",
-    },
-    {
-      label: "Categories",
-      icon: LuListTodo,
-      path: "/dashboard/category",
-    },
-    {
-      label: "Add Transaction",
-      icon: LuFilePlus,
-      path: "/coming-soon",
-    },
-    {
-      label: "Income",
-      icon: LuTrendingUp,
-      path: "/coming-soon",
-    },
-    {
-      label: "Expenses",
-      icon: LuTrendingDown,
-      path: "/coming-soon",
-    },
-    {
-      label: "Accounts / Wallet",
-      icon: LuWallet,
-      path: "/coming-soon",
-    },
-    {
-      label: "Cards",
-      icon: LuCreditCard,
-      path: "/coming-soon",
-    },
-    {
-      label: "Bills / Receipts",
-      icon: LuReceipt,
-      path: "/coming-soon",
-    },
-    {
-      label: "Activity",
+      label: "Activity Logs",
       icon: LuActivity,
-      path: "/coming-soon",
+      path: "/dashboard/activity-logs",
     },
+    { label: "Notifications", icon: LuBell, path: "/coming-soon" },
+    { label: "Profile", icon: LuUser, path: "/coming-soon" },
+    { label: "Settings", icon: LuSettings, path: "/coming-soon" },
   ];
 
   return (
@@ -102,10 +70,10 @@ export default function Sidebar({
         <div className="flex h-16 w-full items-center justify-center border-b">
           <Link href="/dashboard" className="flex items-center space-x-2">
             <span className="text-xl font-bold tracking-tight text-[#F8FAFC]">
-              Wallet
+              Smart
             </span>
             <span className="text-xl font-light tracking-tight text-[#F8FAFC]/70">
-              Wise
+              Stock
             </span>
           </Link>
         </div>
