@@ -5,67 +5,103 @@ import toast from "react-hot-toast";
 import { FiEdit2 } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
 import {
-  fetchAllCupboards,
-  deleteCupboard,
-} from "@/services/cupboard.Services";
-import {
-  CupboardProps,
-  CupboardQueryProps,
-} from "@/utils/interfaces/cupboardInterface";
+  fetchAllStoragePlaces,
+  deleteStoragePlace,
+} from "@/services/storagePlace.Services";
 import { PaginationProps } from "@/utils/interfaces/commanInterface";
 import Pagination from "@/components/Pagination";
-import CreateCupboardModal from "@/components/cupboards/CreateCupboardModal";
 import PopUpModalComponent from "@/components/PopUpModalComponent";
 import PopupButton from "@/components/PopupButton";
-import EditCupboardModal from "@/components/cupboards/EditCupboardModal";
+import CreateStoragePlaceModal from "@/components/storagePlaces/CreateStoragePlaceModal";
+import EditStoragePlaceModal from "@/components/storagePlaces/EditStoragePlaceModal";
 import { useDebounce } from "@/hook/useDebounce";
-import CupboardFilters from "@/components/cupboards/CupboardFilters";
 
-const page = () => {
+import {
+  StoragePlace,
+  StoragePlaceQueryProps,
+} from "@/utils/interfaces/sotrageplaceInterface";
+import { fetchAllCupboards } from "@/services/cupboard.Services";
+import StoragePlaceFilters from "@/components/storagePlaces/StoragePlaceFilters";
+
+const Page = () => {
   const pathname = usePathname();
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState<{
     id: number;
     isOpen: boolean;
   }>({ id: 0, isOpen: false });
-  const [loading, setLoading] = useState<boolean>(false);
-  const [data, setData] = useState<CupboardProps[]>([]);
-  const [openCreatePopup, setOpenCreatePopup] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<StoragePlace[]>([]);
+  const [openCreatePopup, setOpenCreatePopup] = useState(false);
+  const [openEditPopup, setOpenEditPopup] = useState(false);
+  const [editData, setEditData] = useState<StoragePlace | null>(null);
   const [page, setPage] = useState<PaginationProps>({
     total: 0,
     page: 1,
     limit: 20,
   });
-  const [editData, setEditData] = useState<CupboardProps | null>(null);
-  const [openEditPopup, setOpenEditPopup] = useState<boolean>(false);
-  const [query, setQuery] = useState<CupboardQueryProps>({
+  const [query, setQuery] = useState<StoragePlaceQueryProps>({
     search: "",
+    cupboard_id: "",
     sortBy: "name",
     sortOrder: "asc",
     page: 1,
     limit: 20,
   });
+  const [cupboards, setCupboards] = useState<
+    { value: string; label: string }[]
+  >([]);
+
+  useEffect(() => {
+    const loadCupboards = async () => {
+      try {
+        const res = await fetchAllCupboards({
+          search: "",
+          sortBy: "name",
+          sortOrder: "asc",
+          page: 1,
+          limit: 100,
+        });
+        if (res.success) {
+          setCupboards(
+            res.cupboards.map((c: any) => ({
+              value: String(c.id),
+              label: c.name,
+            })),
+          );
+        }
+      } catch {}
+    };
+    loadCupboards();
+  }, []);
 
   const debounced = useDebounce(400, query.search);
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetchAllCupboards({
+      const res = await fetchAllStoragePlaces({
         ...query,
         search: debounced ?? "",
       });
       if (res.success) {
-        setData(res.cupboards);
+        setData(res.places);
         setPage(res.meta);
       } else {
         toast.error(res.message);
       }
     } catch (error: any) {
-      toast.error(error.message || "Unexpected error occurred");
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
-  }, [query.page, query.limit, query.sortBy, query.sortOrder, debounced]);
+  }, [
+    query.page,
+    query.limit,
+    query.sortBy,
+    query.sortOrder,
+    query.cupboard_id,
+    debounced,
+  ]);
 
   useEffect(() => {
     fetchData();
@@ -83,7 +119,7 @@ const page = () => {
     async (id: number) => {
       try {
         setLoading(true);
-        const res = await deleteCupboard(id);
+        const res = await deleteStoragePlace(id);
         if (res.success) {
           toast.success(res.message);
           handleDeleteClose();
@@ -104,13 +140,8 @@ const page = () => {
     setQuery((prev) => ({ ...prev, page: newPage }));
   }, []);
 
-  const handleCreateSuccess = useCallback(() => {
-    setOpenCreatePopup(false);
-    fetchData();
-  }, [fetchData]);
-
-  const handleEditClick = useCallback((cupboard: CupboardProps) => {
-    setEditData(cupboard);
+  const handleEditClick = useCallback((place: StoragePlace) => {
+    setEditData(place);
     setOpenEditPopup(true);
   }, []);
 
@@ -124,6 +155,11 @@ const page = () => {
     fetchData();
   }, [handleEditClose, fetchData]);
 
+  const handleCreateSuccess = useCallback(() => {
+    setOpenCreatePopup(false);
+    fetchData();
+  }, [fetchData]);
+
   return (
     <div className="h-full w-full space-y-4 pb-24">
       <header className="flex flex-row items-center justify-between">
@@ -131,7 +167,7 @@ const page = () => {
           {pathname.substring(1).split("/").join(" / ")}
         </h5>
         <PopupButton
-          text="Create Cupboard"
+          text="Create Storage Place"
           type="button"
           isLoading={loading}
           disabled={loading}
@@ -140,7 +176,11 @@ const page = () => {
       </header>
 
       <section className="flex flex-row gap-3">
-        <CupboardFilters query={query} setQuery={setQuery} />
+        <StoragePlaceFilters
+          query={query}
+          setQuery={setQuery}
+          cupboards={cupboards}
+        />
       </section>
 
       <section>
@@ -148,9 +188,9 @@ const page = () => {
           <thead className="tablehead">
             <tr>
               <th className="tableheadcell">Name</th>
-              <th className="tableheadcell">Location</th>
+              <th className="tableheadcell">Cupboard</th>
               <th className="tableheadcell">Description</th>
-              <th className="tableheadcell">Storage Places</th>
+              <th className="tableheadcell">Items</th>
               <th className="tableheadcell">Created</th>
               <th className="tableheadcell">Actions</th>
             </tr>
@@ -169,10 +209,10 @@ const page = () => {
                 <td colSpan={6} className="px-4 py-12 text-center">
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-sm font-medium text-slate-400">
-                      No cupboards found
+                      No storage places found
                     </p>
                     <p className="text-xs text-slate-300">
-                      Create a cupboard to get started
+                      Create a storage place to get started
                     </p>
                   </div>
                 </td>
@@ -184,13 +224,13 @@ const page = () => {
                     {item.name ?? "-"}
                   </td>
                   <td className="tabledata text-slate-500">
-                    {item.location ?? "-"}
+                    {item.cupboard?.name ?? "-"}
                   </td>
                   <td className="tabledata text-slate-500">
                     {item.description ?? "-"}
                   </td>
                   <td className="tabledata text-slate-500">
-                    {item.storage_places_count ?? 0}
+                    {item.inventory_items_count ?? 0}
                   </td>
                   <td className="tabledata text-slate-400">
                     {item.created_at
@@ -231,35 +271,37 @@ const page = () => {
       {isDeletePopupOpen.isOpen && (
         <PopUpModalComponent
           isOpen={isDeletePopupOpen.isOpen}
-          title="Delete Cupboard"
+          title="Delete Storage Place"
           onClose={handleDeleteClose}
           loading={loading}
           onConfirm={() => handleDeleteConfirm(isDeletePopupOpen.id)}
           confirmText={loading ? "Deleting..." : "Delete"}
           cancelText="Cancel"
         >
-          <span>Are you sure you want to delete this cupboard?</span>
+          <span>Are you sure you want to delete this storage place?</span>
         </PopUpModalComponent>
       )}
 
       {openCreatePopup && (
-        <CreateCupboardModal
+        <CreateStoragePlaceModal
           isOpen={openCreatePopup}
           onClose={() => setOpenCreatePopup(false)}
           onSuccess={handleCreateSuccess}
+          cupboards={cupboards}
         />
       )}
 
       {openEditPopup && editData && (
-        <EditCupboardModal
+        <EditStoragePlaceModal
           isOpen={openEditPopup}
           data={editData}
           onClose={handleEditClose}
           onSuccess={handleEditSuccess}
+          cupboards={cupboards}
         />
       )}
     </div>
   );
 };
 
-export default page;
+export default Page;
