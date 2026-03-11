@@ -37,6 +37,7 @@ const LoginPage = () => {
       if (res.success) {
         toast.success(res.message);
         localStorage.setItem("token", res.data.token);
+        document.cookie = `token=${res.data.token}; path=/; max-age=86400; SameSite=Lax`;
         setUser({
           id: res.data.id,
           name: res.data.name,

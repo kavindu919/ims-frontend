@@ -31,6 +31,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       } catch (error) {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+        document.cookie = "token=; path=/; max-age=0";
         setUser(null);
         setError("Session expired. Please login again.");
         router.push("/login");
@@ -47,6 +48,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       const res = await fetchUserLogout();
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      document.cookie = "token=; path=/; max-age=0";
       setUser(null);
       setError(null);
       toast.success(res.message || "Logged out successfully.");
@@ -54,6 +56,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error: any) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      document.cookie = "token=; path=/; max-age=0";
       setUser(null);
       toast.error(error.message || "Logout failed.");
       router.push("/login");
