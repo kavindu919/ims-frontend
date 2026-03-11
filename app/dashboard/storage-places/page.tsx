@@ -23,7 +23,7 @@ import {
 import { fetchAllCupboards } from "@/services/cupboard.Services";
 import StoragePlaceFilters from "@/components/storagePlaces/StoragePlaceFilters";
 
-const Page = () => {
+const page = () => {
   const pathname = usePathname();
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState<{
     id: number;
@@ -304,4 +304,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default page;

@@ -14,7 +14,7 @@ import { useDebounce } from "@/hook/useDebounce";
 import { User, UserQueryProps } from "@/utils/interfaces/userInterface";
 import { roleColors } from "@/utils/helper/roleBadge.helper";
 
-const Page = () => {
+const page = () => {
   const pathname = usePathname();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<User[]>([]);
@@ -217,4 +217,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default page;

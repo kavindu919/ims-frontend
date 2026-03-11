@@ -26,7 +26,7 @@ const statusColors: Record<string, string> = {
   returned: "bg-green-100 text-green-700",
 };
 
-const Page = () => {
+const page = () => {
   const pathname = usePathname();
   const [isReturnPopupOpen, setIsReturnPopupOpen] = useState<{
     id: number;
@@ -296,4 +296,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default page;

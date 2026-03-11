@@ -27,7 +27,7 @@ import {
 } from "@/utils/interfaces/inventoryInterface";
 import { statusColors } from "@/utils/helper/changeStatus.helper";
 
-const Page = () => {
+const page = () => {
   const pathname = usePathname();
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState<{
     id: number;
@@ -392,4 +392,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default page;

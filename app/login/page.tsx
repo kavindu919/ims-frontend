@@ -12,7 +12,7 @@ import PasswordField from "@/components/PasswordField";
 import InputField from "@/components/InputField";
 import { loginPageInterface } from "@/utils/interfaces/authInterface";
 
-const LoginPage = () => {
+const page = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<loginPageInterface>({
     email: "",
@@ -247,4 +247,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default page;
