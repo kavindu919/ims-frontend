@@ -26,7 +26,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         setLoading(true);
         const res = await fetchUserProfile();
-        setUser(res);
+        if (res.success) {
+          setUser({
+            id: res.data.id,
+            name: res.data.name,
+            email: res.data.email,
+            role: res.data.role,
+          });
+        }
         setError(null);
       } catch (error) {
         localStorage.removeItem("token");
