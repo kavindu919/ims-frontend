@@ -26,11 +26,19 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         setLoading(true);
         const res = await fetchUserProfile();
-        setUser(res);
+        if (res.success) {
+          setUser({
+            id: res.data.id,
+            name: res.data.name,
+            email: res.data.email,
+            role: res.data.role,
+          });
+        }
         setError(null);
       } catch (error) {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+        document.cookie = "token=; path=/; max-age=0";
         setUser(null);
         setError("Session expired. Please login again.");
         router.push("/login");
@@ -47,7 +55,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       const res = await fetchUserLogout();
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      document.cookie = "token=; path=/; Max-Age=0";
+      document.cookie = "token=; path=/; max-age=0";
       setUser(null);
       setError(null);
       toast.success(res.message || "Logged out successfully.");
@@ -55,6 +63,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error: any) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      document.cookie = "token=; path=/; max-age=0";
       setUser(null);
       toast.error(error.message || "Logout failed.");
       router.push("/login");

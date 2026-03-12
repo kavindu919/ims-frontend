@@ -2,19 +2,20 @@
 
 import {
   LuActivity,
-  LuCreditCard,
-  LuFilePlus,
+  LuArchive,
   LuLayers,
-  LuListTodo,
-  LuPiggyBank,
+  LuPackage,
   LuReceipt,
-  LuTrendingDown,
+  LuSettings,
   LuTrendingUp,
-  LuWallet,
+  LuUser,
+  LuUsers,
 } from "react-icons/lu";
 import { VscDashboard } from "react-icons/vsc";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUser } from "@/hook/useUser";
+import { useMemo } from "react";
 
 interface SideBarProps {
   isMobileOpen: boolean;
@@ -26,65 +27,76 @@ export default function Sidebar({
   setIsMobileOpen,
 }: SideBarProps) {
   const pathname = usePathname();
+  const { user } = useUser();
 
   const navLinks = [
     {
       label: "Dashboard",
       icon: VscDashboard,
       path: "/dashboard",
+      roles: ["admin", "staff"],
     },
     {
-      label: "Transactions",
+      label: "Inventory",
+      icon: LuPackage,
+      path: "/dashboard/inventory",
+      roles: ["admin", "staff"],
+    },
+    {
+      label: "Borrow Records",
+      icon: LuReceipt,
+      path: "/dashboard/borrow",
+      roles: ["admin", "staff"],
+    },
+    {
+      label: "Cupboards",
+      icon: LuArchive,
+      path: "/dashboard/cupboard",
+      roles: ["admin", "staff"],
+    },
+    {
+      label: "Storage Places",
       icon: LuLayers,
-      path: "/dashboard/transactions",
+      path: "/dashboard/storage-places",
+      roles: ["admin", "staff"],
     },
     {
-      label: "Budget",
-      icon: LuPiggyBank,
-      path: "/dashboard/budget",
+      label: "Users",
+      icon: LuUsers,
+      path: "/dashboard/users",
+      roles: ["admin"],
     },
     {
-      label: "Categories",
-      icon: LuListTodo,
-      path: "/dashboard/category",
+      label: "Activity Logs",
+      icon: LuActivity,
+      path: "/dashboard/activity-logs",
+      roles: ["admin"],
     },
     {
-      label: "Add Transaction",
-      icon: LuFilePlus,
-      path: "/coming-soon",
-    },
-    {
-      label: "Income",
+      label: "Reports",
       icon: LuTrendingUp,
       path: "/coming-soon",
+      roles: ["admin", "staff"],
     },
     {
-      label: "Expenses",
-      icon: LuTrendingDown,
+      label: "Profile",
+      icon: LuUser,
       path: "/coming-soon",
+      roles: ["admin", "staff"],
     },
     {
-      label: "Accounts / Wallet",
-      icon: LuWallet,
+      label: "Settings",
+      icon: LuSettings,
       path: "/coming-soon",
-    },
-    {
-      label: "Cards",
-      icon: LuCreditCard,
-      path: "/coming-soon",
-    },
-    {
-      label: "Bills / Receipts",
-      icon: LuReceipt,
-      path: "/coming-soon",
-    },
-    {
-      label: "Activity",
-      icon: LuActivity,
-      path: "/coming-soon",
+      roles: ["admin", "staff"],
     },
   ];
 
+  const filteredLinks = useMemo(
+    () =>
+      navLinks.filter((link) => user?.role && link.roles.includes(user.role)),
+    [user],
+  );
   return (
     <>
       {isMobileOpen && (
@@ -102,16 +114,16 @@ export default function Sidebar({
         <div className="flex h-16 w-full items-center justify-center border-b">
           <Link href="/dashboard" className="flex items-center space-x-2">
             <span className="text-xl font-bold tracking-tight text-[#F8FAFC]">
-              Wallet
+              Smart
             </span>
             <span className="text-xl font-light tracking-tight text-[#F8FAFC]/70">
-              Wise
+              Stock
             </span>
           </Link>
         </div>
 
         <nav className="mt-6 flex w-full flex-col space-y-1 px-3">
-          {navLinks.map((item, key) => {
+          {filteredLinks.map((item, key) => {
             const Icon = item.icon;
 
             const isActive = pathname === item.path;

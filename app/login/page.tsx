@@ -12,7 +12,7 @@ import PasswordField from "@/components/PasswordField";
 import InputField from "@/components/InputField";
 import { loginPageInterface } from "@/utils/interfaces/authInterface";
 
-const LoginPage = () => {
+const page = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<loginPageInterface>({
     email: "",
@@ -36,7 +36,7 @@ const LoginPage = () => {
       if (res.success) {
         toast.success(res.message);
         localStorage.setItem("token", res.data.token);
-        document.cookie = `token=${res.token}; path=/`;
+        document.cookie = `token=${res.data.token}; path=/; max-age=86400; SameSite=Lax`;
         setUser({
           id: res.data.id,
           name: res.data.name,
@@ -247,4 +247,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default page;
