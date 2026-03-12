@@ -23,8 +23,6 @@ import CreateBorrowModal from "@/components/borrow/CreateBorrowModal";
 import { useUser } from "@/hook/useUser";
 import { statusColors } from "@/utils/helper/borrowStatusColor";
 
-
-
 const page = () => {
   const pathname = usePathname();
   const [isReturnPopupOpen, setIsReturnPopupOpen] = useState<{
@@ -74,7 +72,7 @@ const page = () => {
             })),
           );
         }
-      } catch { }
+      } catch {}
     };
     fetchItems();
   }, []);
@@ -181,7 +179,7 @@ const page = () => {
               <th className="tableheadcell">Expected Return</th>
               <th className="tableheadcell">Return Date</th>
               <th className="tableheadcell">Status</th>
-              {isAdmin && <th className="tableheadcell">Actions</th>}
+              <th className="tableheadcell">Actions</th>
             </tr>
           </thead>
           <tbody className="tablebody">
@@ -246,19 +244,18 @@ const page = () => {
                       {item.status}
                     </span>
                   </td>
-                  {isAdmin && (
-                    <td className="tabledata">
-                      {item.status === "borrowed" && (
-                        <button
-                          className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-green-50 hover:text-green-600"
-                          onClick={() => handleReturnClick(item.id)}
-                          title="Mark as Returned"
-                        >
-                          <MdOutlineKeyboardReturn size={16} />
-                        </button>
-                      )}
-                    </td>
-                  )}
+
+                  <td className="tabledata">
+                    {item.status === "borrowed" && (
+                      <button
+                        className="rounded-md p-1.5 text-slate-400 transition-colors duration-150 hover:bg-green-50 hover:text-green-600"
+                        onClick={() => handleReturnClick(item.id)}
+                        title="Mark as Returned"
+                      >
+                        <MdOutlineKeyboardReturn size={16} />
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))
             )}
@@ -274,7 +271,7 @@ const page = () => {
         />
       </section>
 
-      {isReturnPopupOpen.isOpen && isAdmin && (
+      {isReturnPopupOpen.isOpen && (
         <PopUpModalComponent
           isOpen={isReturnPopupOpen.isOpen}
           title="Return Item"
@@ -288,7 +285,7 @@ const page = () => {
         </PopUpModalComponent>
       )}
 
-      {openCreatePopup && isAdmin && (
+      {openCreatePopup && (
         <CreateBorrowModal
           isOpen={openCreatePopup}
           onClose={() => setOpenCreatePopup(false)}
