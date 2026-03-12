@@ -92,7 +92,9 @@ const page = () => {
             })),
           );
         }
-      } catch {}
+      } catch (error: any) {
+        toast.error(error.message || "Unexpected error occurred");
+      }
     };
     fetchStoragePlaces();
   }, []);
