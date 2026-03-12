@@ -33,7 +33,6 @@ const page = () => {
       setLoading(true);
       const validData = loginSchema.parse(data);
       const res = await fetchUserLogin(validData.email, validData.password);
-      console.log(res);
       if (res.success) {
         toast.success(res.message);
         localStorage.setItem("token", res.data.token);
