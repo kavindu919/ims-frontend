@@ -121,6 +121,7 @@ const AdjustQuantityModal = memo(
                       type="number"
                       value={formData.amount}
                       placeholder="e.g. 5"
+                      min={0}
                       onChange={handleChange}
                       disabled={loading}
                       required
