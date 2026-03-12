@@ -83,6 +83,8 @@ const page = () => {
               <th className="tableheadcell">Action</th>
               <th className="tableheadcell">User</th>
               <th className="tableheadcell">Subject</th>
+              <th className="tableheadcell">Old Value</th>
+              <th className="tableheadcell">New Value</th>
               <th className="tableheadcell">Date</th>
             </tr>
           </thead>
@@ -128,6 +130,30 @@ const page = () => {
                     {item.subject_type
                       ? `${item.subject_type} #${item.subject_id}`
                       : "-"}
+                  </td>
+                  <td className="tabledata text-slate-500 max-w-[160px]">
+                    {item.old_value && Object.keys(item.old_value).length > 0 ? (
+                      <div className="space-y-0.5">
+                        {Object.entries(item.old_value).map(([k, v]) => (
+                          <div key={k} className="flex gap-1 text-xs">
+                            <span className="font-medium text-slate-400">{k}:</span>
+                            <span className="text-red-500 truncate">{String(v)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : "-"}
+                  </td>
+                  <td className="tabledata text-slate-500 max-w-[160px]">
+                    {item.new_value && Object.keys(item.new_value).length > 0 ? (
+                      <div className="space-y-0.5">
+                        {Object.entries(item.new_value).map(([k, v]) => (
+                          <div key={k} className="flex gap-1 text-xs">
+                            <span className="font-medium text-slate-400">{k}:</span>
+                            <span className="text-green-600 truncate">{String(v)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : "-"}
                   </td>
 
                   <td className="tabledata text-slate-400">
